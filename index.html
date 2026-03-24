@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bandas que eu gosto e recomendo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --surface3: #272727;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0ede8;
+    --text-muted: #7a7570;
+    --text-dim: #4a4743;
+    --accent: #c8a96e;
+    --accent-dim: rgba(200,169,110,0.12);
+    --accent-glow: rgba(200,169,110,0.25);
+    --red: #c85a5a;
+    --green: #6ec88a;
+    --sidebar-w: 260px;
+    --player-h: 88px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+  }
+
+  /* ── LAYOUT ── */
+  .app {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    grid-template-rows: 1fr var(--player-h);
+    height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    grid-row: 1 / 2;
+    background: #111111;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 28px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .sidebar-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+  }
+
+  .sidebar-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .genre-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface3) transparent;
+  }
+
+  .genre-list::-webkit-scrollbar { width: 4px; }
+  .genre-list::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+  .genre-label {
+    padding: 10px 20px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .genre-item {
+    padding: 8px 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+    transition: color 0.15s, background 0.15s;
+    border-left: 2px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .genre-item:hover {
+    color: var(--text);
+    background: var(--accent-dim);
+  }
+
+  .genre-item.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: var(--accent-dim);
+    font-weight: 500;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    grid-row: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .main-header {
+    padding: 28px 32px 0;
+    flex-shrink: 0;
+  }
+
+  .genre-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .genre-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 300;
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  .track-table-header {
+    display: grid;
+    grid-template-columns: 28px 1fr 180px 60px;
+    padding: 12px 32px;
+    margin-top: 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .track-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface3) transparent;
+  }
+
+  .track-list::-webkit-scrollbar { width: 4px; }
+  .track-list::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+  .track-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 180px 60px;
+    align-items: center;
+    padding: 0 32px;
+    height: 56px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-radius: 4px;
+    margin: 0 8px;
+    position: relative;
+  }
+
+  .track-row:hover {
+    background: var(--surface);
+  }
+
+  .track-row.playing {
+    background: var(--accent-dim);
+  }
+
+  .track-num {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .track-row.playing .track-num {
+    color: var(--accent);
+  }
+
+  .playing-bars {
+    display: none;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+  }
+
+  .track-row.playing .playing-bars {
+    display: flex;
+  }
+
+  .track-row.playing .track-num-static {
+    display: none;
+  }
+
+  .playing-bars span {
+    width: 3px;
+    background: var(--accent);
+    border-radius: 1px;
+    animation: bar 0.8s ease-in-out infinite alternate;
+  }
+
+  .playing-bars span:nth-child(1) { height: 6px; animation-delay: 0s; }
+  .playing-bars span:nth-child(2) { height: 12px; animation-delay: 0.2s; }
+  .playing-bars span:nth-child(3) { height: 8px; animation-delay: 0.4s; }
+
+  @keyframes bar {
+    from { opacity: 0.5; transform: scaleY(0.5); }
+    to { opacity: 1; transform: scaleY(1); }
+  }
+
+  .track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+    padding-right: 16px;
+  }
+
+  .track-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .track-row.playing .track-name {
+    color: var(--accent);
+  }
+
+  .track-artist {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 300;
+  }
+
+  .track-note-preview {
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-style: italic;
+    padding-right: 12px;
+  }
+
+  .track-duration {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  /* note tooltip */
+  .note-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .track-row:hover .note-btn {
+    opacity: 1;
+  }
+
+  .note-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ── PLAYER BAR ── */
+  .player-bar {
+    grid-column: 1 / -1;
+    background: #111;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+  }
+
+  .player-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  .player-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    background: var(--surface3);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--text-dim);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .player-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .player-track-info {
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .player-track-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .player-track-artist {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 300;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+
+  .player-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .player-buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ctrl-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+  }
+
+  .ctrl-btn:hover { color: var(--text); }
+
+  .ctrl-btn.play {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--text);
+    color: #111;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .ctrl-btn.play:hover {
+    background: var(--accent);
+    transform: scale(1.05);
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .time-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--surface3);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.5s linear;
+    pointer-events: none;
+  }
+
+  .progress-bar:hover .progress-fill {
+    background: var(--accent);
+  }
+
+  .player-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .volume-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .vol-icon {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 80px;
+    height: 4px;
+    background: var(--surface3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--text);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  input[type="range"]:hover::-webkit-slider-thumb {
+    background: var(--accent);
+  }
+
+  /* ── VIDEO PANEL ── */
+  .video-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    backdrop-filter: blur(8px);
+  }
+
+  .video-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .video-panel {
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    width: min(720px, 92vw);
+    border: 1px solid var(--border);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+  }
+
+  .video-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .video-panel-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .video-panel-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.15s;
+  }
+
+  .video-panel-close:hover { color: var(--text); }
+
+  #yt-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+  }
+
+  #yt-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-note {
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.6;
+    font-weight: 300;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  /* ── NOTE MODAL ── */
+  .note-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    backdrop-filter: blur(4px);
+  }
+
+  .note-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .note-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    max-width: 420px;
+    width: 90vw;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  }
+
+  .note-card-band {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .note-card-song {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 16px;
+    letter-spacing: 0.03em;
+  }
+
+  .note-card-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  .note-card-close {
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 9px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .note-card-close:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* SVG icons inline */
+  svg { display: block; }
+
+  .no-tracks {
+    padding: 40px 32px;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Bandas que eu gosto<br>e recomendo</div>
+      <div class="sidebar-subtitle">Lista do que mais gosto no momento</div>
+    </div>
+    <div class="genre-list" id="genre-list"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-header">
+      <div class="genre-title" id="genre-title">Metal</div>
+      <div class="genre-desc" id="genre-desc"></div>
+    </div>
+    <div class="track-table-header">
+      <span>#</span>
+      <span>Banda / Música</span>
+      <span>Nota pessoal</span>
+      <span style="text-align:right"></span>
+    </div>
+    <div class="track-list" id="track-list"></div>
+  </main>
+
+  <!-- PLAYER BAR -->
+  <div class="player-bar">
+    <div class="player-track">
+      <div class="player-thumb" id="player-thumb">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        </svg>
+      </div>
+      <div class="player-track-info">
+        <div class="player-track-name" id="player-track-name">Nada tocando</div>
+        <div class="player-track-artist" id="player-track-artist">Clique em uma música</div>
+      </div>
+    </div>
+
+    <div class="player-controls">
+      <div class="player-buttons">
+        <button class="ctrl-btn" id="btn-prev" title="Anterior">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        </button>
+        <button class="ctrl-btn play" id="btn-play" title="Play/Pause">
+          <svg id="play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btn-next" title="Próxima">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2.5-6 8.5 6V6z"/></svg>
+        </button>
+      </div>
+      <div class="progress-row">
+        <span class="time-label" id="time-cur">0:00</span>
+        <div class="progress-bar" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="time-label" id="time-dur">0:00</span>
+      </div>
+    </div>
+
+    <div class="player-right">
+      <button class="ctrl-btn" id="btn-video" title="Ver vídeo" style="gap:6px;font-size:11px;color:var(--text-muted);padding:6px 12px;border:1px solid var(--border);border-radius:20px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M10 15l5.19-3L10 9v6zm12-7H2v12h20V8zM2 6h20V4H2v2z"/></svg>
+        Abrir vídeo
+      </button>
+      <div class="volume-row">
+        <svg class="vol-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <input type="range" id="volume" min="0" max="100" value="80">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO OVERLAY -->
+<div class="video-overlay" id="video-overlay">
+  <div class="video-panel">
+    <div class="video-panel-header">
+      <div class="video-panel-title" id="video-panel-title">—</div>
+      <button class="video-panel-close" id="video-close">&times;</button>
+    </div>
+    <div id="yt-container">
+      <iframe id="yt-frame" allowfullscreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share">
+      </iframe>
+    </div>
+    <div class="video-note" id="video-note"></div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="note-overlay" id="note-overlay">
+  <div class="note-card">
+    <div class="note-card-band" id="note-band"></div>
+    <div class="note-card-song" id="note-song"></div>
+    <div class="note-card-text" id="note-text"></div>
+    <button class="note-card-close" id="note-close">fechar</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const genres = [
+  {
+    id: 'metal',
+    label: 'Metal',
+    desc: 'Onde comecei a ouvir rock.',
+    tracks: [
+      { band:'Accept', song:'Fast as a Shark', yt:'lLImD_ArO4Q', note:'Que eu mais gosto é Fast as a Shark, mais famosa é Balls to the Wall.' },
+      { band:'Alice Cooper', song:'Poison', yt:'dOOTKA_mORk', note:'Não sou tão fã de Alice Cooper apesar de adorar a estética.' },
+      { band:'Black Sabbath', song:'Born Again', yt:'sTwRNSmTBl8', note:'Me dá um sentimento diferente, sla. Mas a mais famosa é a Paranoid ou Iron Man mesmo.' },
+      { band:'Danzig', song:'Mother', yt:'KVnHvgSMSb0', note:'PQP música maravilhosa, me lembra GTA San Andreas.' },
+      { band:'Def Leppard', song:'Pour Some Sugar on Me', yt:'yo73X-Im_3E', note:'Fun fact: One Direction copiou essa música kkkkk.' },
+      { band:'Dio', song:'Rainbow in the Dark', yt:'pPk2GkExgaU', note:'Mais famosa é Holy Diver mas sla. O Deus do metal, pqp, lindo demais.' },
+      { band:'Iron Maiden', song:'Wasting Love', yt:'2Xph2_62Cgs', note:'Difícil demais eu escolher uma música, gosto de todas.' },
+      { band:'Judas Priest', song:'Electric Eye', yt:'3noChy_CErA', note:'A mais famosa é a Painkiller. Difícil eu escolher uma música também, talvez seja minha banda favorita. Já fui no show e me emociono em lembrar da sensação de ouvir isso ao vivo.' },
+      { band:'Lizzy Borden', song:'Me Against the World', yt:'4XRSvBwqBmE', note:'Eu achava muito diferente o visual kkkk.' },
+      { band:'Manowar', song:'Warriors of the World United', yt:'QM35gAyMBRY', note:'PQP essa aqui me dava vontade de lutar na guerra, absurdo.' },
+      { band:'King Diamond', song:'Welcome Home', yt:'rnDAlNkDqMM', note:'Eu tinha muito medo dessa banda. Ela conta histórias de terror em seus álbuns, como se fosse um livro. Hoje não tenho mais medo, porém por alguns motivos acho triste ouvir.' },
+      { band:'Motörhead', song:'Brotherhood of Man', yt:'04-Ym7SiPT8', note:'A mais famosa é Ace of Spades. Já fui no show também. F Lemmy.' },
+      { band:'Ozzy Osbourne', song:'I Just Want You', yt:'pJG-Q4S2oRw', note:'Atualmente to viciado na música I Just Want You. Mas não tem nada do Ozzy que eu não goste. Tenho a honra de ter escutado ele ao vivo também. Chorei demais quando ele se foi.' },
+      { band:'Pantera', song:'Hollow', yt:'Vq-pEnR2yGc', note:'Acho essa música absurdo. Sinto uma melancolia e depois ela vem e dá um tapa na tua cara falando "tá maluco porra, para de ser gay". Bom demais.' },
+      { band:'Saxon', song:'Crusader', yt:'OGG8P59cQg8', note:'Essa música é simplesmente genial.' },
+      { band:'Savatage', song:'Hall of the Mountain King', yt:'TIPzBEIkqe8', note:'Acredito que seja minha música, álbum e banda favoritos. Eu simplesmente acho tudo aqui genial — vocal, instrumento, vibe. Tudo é indescritível e algo que só essa banda passa.' },
+      { band:'Stratovarius', song:'4000 Rainy Nights', yt:'sSyKqt3WNqs', note:'Essa música me traz um sentimento de nostalgia e tristeza. Eu escutava muito quando eu morava com meus irmãos.' },
+      { band:'U.D.O.', song:'I Give as Good as I Get', yt:'gGzc4FOA_7Q', note:'Vocalista lá da primeira banda da lista, só que em carreira solo e velho kkkk. Gosto muito.' },
+    ]
+  },
+  {
+    id: 'thrash',
+    label: 'Thrash Metal',
+    desc: 'Atualmente meu estilo favorito.',
+    tracks: [
+      { band:'Anthrax', song:'Madhouse', yt:'qWnwqP1TtD4', note:'' },
+      { band:'Megadeth', song:'A Tout le Monde', yt:'NNpGSHANk5s', note:'Gosto MUITO de A Tout le Monde. Mas a mais famosa é Holy Wars e eu gosto demais tb.' },
+      { band:'Metallica', song:'Fade to Black', yt:'WM8bTdBs-cw', note:'Realmente difícil demais escolher uma música. Mas acredito que minha favorita é Fade to Black.' },
+      { band:'Sepultura', song:'Roots Bloody Roots', yt:'2_iGB0ysm7A', note:'' },
+      { band:'Slayer', song:'Raining Blood', yt:'1yuF4tLW_10', note:'Gosto MUITO de Raining Blood e de Seasons in the Abyss.' },
+      { band:'Testament', song:'Return to Serenity', yt:'3NPhG0SnNAE', note:'PQP meu favorito do thrash. Gosto demais de Return to Serenity e também Practice What You Preach.' },
+    ]
+  },
+  {
+    id: 'glam',
+    label: 'Glam Metal',
+    desc: 'Bandas que me fazem sofrer e ficar feliz ao mesmo tempo.',
+    tracks: [
+      { band:'Bon Jovi', song:'Blaze of Glory', yt:'M4wqDTp6wXQ', note:'Teve uma época que eu era VICIADO em Bon Jovi. Música que eu mais gosto é Blaze of Glory. Mais famosa é It\'s My Life.' },
+      { band:'Cinderella', song:"Nobody's Fool", yt:'I9zOqFhWTTY', note:'Gosto DEMAIS. Música favorita é Nobody\'s Fool — essa dá vontade de se matar chorando. Porém Shake Me é boa demais pqp, dá vontade de viver.' },
+      { band:"Guns N' Roses", song:'November Rain', yt:'8SbUC-UaAxE', note:'Apesar de que o TikTok me saturou um pouco... Odeio a música Sweet Child O\' Mine, mas gosto muito da banda em si.' },
+      { band:'Mötley Crüe', song:'Kickstart My Heart', yt:'CmXWkMlKFkI', note:'PQP ABSURDO DE BANDA. Kickstart My Heart é a minha favorita, mas gosto MUITO de tudo da banda.' },
+      { band:'Quiet Riot', song:'Cum on Feel the Noize', yt:'b_RjndG0IX8', note:'Merecia mais reconhecimento... Gosto muito de Cum on Feel the Noize e Bang Your Head.' },
+      { band:'Ratt', song:'Round and Round', yt:'qW0N1P5UNB8', note:'' },
+      { band:'Skid Row', song:'18 and Life', yt:'JkL9PYkAVBg', note:'Talvez uma das minhas favoritas de glam. Gosto MUITO de tudo — desde a música depressiva até a mais animada. Gosto de 18 and Life e também I Remember You (essa é pra chorar).' },
+      { band:'Twisted Sister', song:'The Price', yt:'PZD69NcaHG8', note:'PERFEITA. Gosto muito de The Price — me deixa triste. Mas as mais famosas são I Wanna Rock e We\'re Not Gonna Take It.' },
+    ]
+  },
+  {
+    id: 'hard',
+    label: 'Hard Rock',
+    desc: 'Clássicos.',
+    tracks: [
+      { band:'Aerosmith', song:'Dream On', yt:'89dGC8de0CA', note:'Não preciso elaborar muito. Todas são boas e essa o vocal é de um anjo.' },
+      { band:'Deep Purple', song:'Perfect Strangers', yt:'U7rQMiEBj8M', note:'Clássico demais essa banda. A mais famosa é Smoke on the Water.' },
+      { band:'Kiss', song:"I Was Made for Lovin' You", yt:'4kbo-E3XxNM', note:'A mais famosa é Rock and Roll All Nite. Pra ser sincero gosto de MUITAS músicas deles. Foi quem me fez entrar pro mundo do rock kkk.' },
+      { band:'Led Zeppelin', song:'Stairway to Heaven', yt:'D9ioyEvdggk', note:'Um clássico, não tem muito o que falar... Só sentimento.' },
+      { band:'Lynyrd Skynyrd', song:'Simple Man', yt:'2uEqIv3EUSU', note:'' },
+      { band:'Mr. Big', song:'To Be with You', yt:'_uAj_OkO0AY', note:'Desgraçado com voz boa do crl. Gosto muito de To Be with You, que é um clássico.' },
+      { band:'Scorpions', song:'Still Loving You', yt:'PxaHNsOoMEI', note:'Consegue ser tristeza profunda e muita alegria ao mesmo tempo. Gosto demais de Still Loving You — me dá depressão essa música. Mas é boa. A mais famosinha e alegre é Rock You Like a Hurricane.' },
+      { band:'Van Halen', song:'Jump', yt:'SwYN7mTi6HM', note:'' },
+      { band:'Warrant', song:'Cherry Pie', yt:'Ai2HmvAXtS8', note:'Boa demais.' },
+    ]
+  },
+  {
+    id: 'mentions',
+    label: 'Menções Honrosas',
+    desc: 'Bandas que não encaixei bem em uma categoria mas que gosto muito.',
+    tracks: [
+      { band:'Slipknot', song:'(qualquer música)', yt:'5aVnTmxKkgw', note:'Me fez gostar de rock pesado e eu achava que era das trevas.' },
+      { band:'Type O Negative', song:'Christian Woman', yt:'gJrzBM1Pxpo', note:'Atualmente é o que mais escuto. To mais nessa fase de músicas assim.' },
+      { band:'Rammstein', song:'(qualquer coisa)', yt:'NeQM1c-XCDc', note:'Minha banda favorita de todas. Sempre escutei desde criança. Gosto de QUALQUER música. Literalmente não tem música ruim.' },
+      { band:'Audioslave', song:'Like a Stone', yt:'yTjGa3Yp8YE', note:'Boa pra ouvir arrumando a casa kkkkkkk.' },
+      { band:'Alice in Chains', song:'Man in the Box', yt:'nkiFrMpVbzA', note:'PQP ABSURDO QUALQUER COISA. Man in the Box me dá vontade de estar depressivo e drogado num bar ouvindo essa e bebendo.' },
+      { band:'Angra', song:'Wuthering Heights', yt:'C_TK7qGMpFI', note:'Não tem como não falar do DEUS brasileiro. A versão deles de Wuthering Heights é uma das coisas mais lindas que já vi.' },
+      { band:'Electric Wizard', song:'Dopethrone', yt:'ZX26fhW2LUE', note:'Meio que a vibe de Type O Negative. To ouvindo MUITO atualmente também. Apesar de parecer meio que uma barulheira, é bom, é o jeito da banda kkkkkkkk.' },
+      { band:'Crowbar', song:'Planets Collide', yt:'GdFwmfkMxoQ', note:'Conheci recentemente e achei absurdo. Mesmo "tema" de Type O e Electric Wizard e Testament. Absurda.' },
+      { band:'Katatonia', song:'My Twin', yt:'0dkCy9Q_xag', note:'Conheci a pouco mas é boa.' },
+      { band:'Ghost', song:'Year Zero', yt:'Zo0iMTa9GqY', note:'Me sentia satanista.' },
+    ]
+  }
+];
+
+// ── STATE ──
+let currentGenreId = 'metal';
+let currentTrackIndex = -1;
+let isPlaying = false;
+let ytPlayer = null;
+let progressTimer = null;
+
+// ── YT API ──
+function loadYTApi() {
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+}
+
+window.onYouTubeIframeAPIReady = function() {
+  ytPlayer = new YT.Player('yt-frame', {
+    events: {
+      onStateChange: onPlayerStateChange,
+      onReady: onPlayerReady
+    }
+  });
+};
+
+function onPlayerReady(e) {}
+
+function onPlayerStateChange(e) {
+  if (e.data === YT.PlayerState.ENDED) {
+    playNext();
+  }
+  if (e.data === YT.PlayerState.PLAYING) {
+    isPlaying = true;
+    updatePlayIcon();
+    startProgressTimer();
+  }
+  if (e.data === YT.PlayerState.PAUSED) {
+    isPlaying = false;
+    updatePlayIcon();
+    clearProgressTimer();
+  }
+}
+
+function startProgressTimer() {
+  clearProgressTimer();
+  progressTimer = setInterval(() => {
+    if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+    const cur = ytPlayer.getCurrentTime() || 0;
+    const dur = ytPlayer.getDuration() || 0;
+    document.getElementById('time-cur').textContent = formatTime(cur);
+    document.getElementById('time-dur').textContent = formatTime(dur);
+    if (dur > 0) {
+      document.getElementById('progress-fill').style.width = (cur / dur * 100) + '%';
+    }
+  }, 500);
+}
+
+function clearProgressTimer() {
+  if (progressTimer) clearInterval(progressTimer);
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+
+// ── RENDER SIDEBAR ──
+function renderSidebar() {
+  const el = document.getElementById('genre-list');
+  el.innerHTML = '';
+  genres.forEach(g => {
+    const item = document.createElement('div');
+    item.className = 'genre-item' + (g.id === currentGenreId ? ' active' : '');
+    item.textContent = g.label;
+    item.onclick = () => selectGenre(g.id);
+    el.appendChild(item);
+  });
+}
+
+// ── RENDER TRACKS ──
+function renderTracks() {
+  const genre = genres.find(g => g.id === currentGenreId);
+  document.getElementById('genre-title').textContent = genre.label;
+  document.getElementById('genre-desc').textContent = genre.desc;
+
+  const list = document.getElementById('track-list');
+  list.innerHTML = '';
+
+  genre.tracks.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'track-row' + (currentTrackIndex === i && isCurrentGenre() ? ' playing' : '');
+    row.innerHTML = `
+      <div class="track-num">
+        <span class="track-num-static">${i + 1}</span>
+        <div class="playing-bars"><span></span><span></span><span></span></div>
+      </div>
+      <div class="track-info">
+        <div class="track-name">${t.song}</div>
+        <div class="track-artist">${t.band}</div>
+      </div>
+      <div class="track-note-preview">${t.note ? '"' + t.note.substring(0, 60) + (t.note.length > 60 ? '…' : '') + '"' : ''}</div>
+      <div class="track-duration"></div>
+      ${t.note ? `<button class="note-btn" title="Ver nota">i</button>` : ''}
+    `;
+
+    row.addEventListener('click', (e) => {
+      if (e.target.classList.contains('note-btn')) {
+        showNote(t);
+        return;
+      }
+      playTrack(i);
+    });
+
+    if (t.note) {
+      row.querySelector('.note-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showNote(t);
+      });
+    }
+
+    list.appendChild(row);
+  });
+}
+
+function isCurrentGenre() {
+  return true; // simplified: track index is genre-scoped in state
+}
+
+// ── PLAY ──
+function playTrack(index) {
+  const genre = genres.find(g => g.id === currentGenreId);
+  const track = genre.tracks[index];
+  if (!track) return;
+
+  currentTrackIndex = index;
+  isPlaying = true;
+
+  // update player bar
+  document.getElementById('player-track-name').textContent = track.song;
+  document.getElementById('player-track-artist').textContent = track.band;
+
+  // update video panel title
+  document.getElementById('video-panel-title').textContent = track.band + ' — ' + track.song;
+  document.getElementById('video-note').textContent = track.note || '';
+  document.getElementById('video-note').style.display = track.note ? 'block' : 'none';
+
+  // load YT
+  if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+    ytPlayer.loadVideoById(track.yt);
+  } else {
+    // fallback: set src directly
+    const frame = document.getElementById('yt-frame');
+    frame.src = `https://www.youtube.com/embed/${track.yt}?autoplay=1&enablejsapi=1`;
+  }
+
+  updatePlayIcon();
+  renderTracks();
+}
+
+function playNext() {
+  const genre = genres.find(g => g.id === currentGenreId);
+  const next = (currentTrackIndex + 1) % genre.tracks.length;
+  playTrack(next);
+}
+
+function playPrev() {
+  const genre = genres.find(g => g.id === currentGenreId);
+  const prev = (currentTrackIndex - 1 + genre.tracks.length) % genre.tracks.length;
+  playTrack(prev);
+}
+
+function togglePlay() {
+  if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+  const state = ytPlayer.getPlayerState();
+  if (state === YT.PlayerState.PLAYING) {
+    ytPlayer.pauseVideo();
+  } else {
+    ytPlayer.playVideo();
+  }
+}
+
+function updatePlayIcon() {
+  const icon = document.getElementById('play-icon');
+  if (isPlaying) {
+    icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+  } else {
+    icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+  }
+}
+
+// ── SELECT GENRE ──
+function selectGenre(id) {
+  currentGenreId = id;
+  currentTrackIndex = -1;
+  renderSidebar();
+  renderTracks();
+}
+
+// ── VIDEO OVERLAY ──
+document.getElementById('btn-video').addEventListener('click', () => {
+  if (currentTrackIndex === -1) return;
+  document.getElementById('video-overlay').classList.add('open');
+});
+
+document.getElementById('video-close').addEventListener('click', () => {
+  document.getElementById('video-overlay').classList.remove('open');
+});
+
+document.getElementById('video-overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('video-overlay')) {
+    document.getElementById('video-overlay').classList.remove('open');
+  }
+});
+
+// ── NOTE MODAL ──
+function showNote(track) {
+  document.getElementById('note-band').textContent = track.band;
+  document.getElementById('note-song').textContent = track.song;
+  document.getElementById('note-text').textContent = track.note;
+  document.getElementById('note-overlay').classList.add('open');
+}
+
+document.getElementById('note-close').addEventListener('click', () => {
+  document.getElementById('note-overlay').classList.remove('open');
+});
+
+document.getElementById('note-overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('note-overlay')) {
+    document.getElementById('note-overlay').classList.remove('open');
+  }
+});
+
+// ── CONTROLS ──
+document.getElementById('btn-play').addEventListener('click', togglePlay);
+document.getElementById('btn-next').addEventListener('click', playNext);
+document.getElementById('btn-prev').addEventListener('click', playPrev);
+
+document.getElementById('volume').addEventListener('input', (e) => {
+  if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+    ytPlayer.setVolume(parseInt(e.target.value));
+  }
+});
+
+document.getElementById('progress-bar').addEventListener('click', (e) => {
+  if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  const dur = ytPlayer.getDuration();
+  ytPlayer.seekTo(pct * dur, true);
+});
+
+// ── INIT ──
+loadYTApi();
+renderSidebar();
+renderTracks();
+</script>
+</body>
+</html>
