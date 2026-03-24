@@ -875,7 +875,9 @@
 
 <!-- IFRAME OCULTO - necessário para YT API funcionar corretamente -->
 <div id="yt-hidden-container" style="position:fixed;left:-9999px;top:-9999px;width:480px;height:270px;pointer-events:none;opacity:0;z-index:-1;">
-  <iframe id="yt-frame" allowfullscreen
+  <iframe id="yt-frame"
+    src="https://www.youtube.com/embed/?enablejsapi=1&origin=https://www.youtube.com"
+    allowfullscreen
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share">
   </iframe>
 </div>
@@ -1011,7 +1013,7 @@ function loadYTApi() {
 
 window.onYouTubeIframeAPIReady = function() {
   ytPlayer = new YT.Player('yt-frame', {
-    playerVars: { autoplay: 0, enablejsapi: 1 },
+    playerVars: { autoplay: 0, enablejsapi: 1, origin: 'https://www.youtube.com' },
     events: {
       onStateChange: onPlayerStateChange,
       onReady: onPlayerReady
@@ -1150,7 +1152,7 @@ function playTrack(index) {
   } else {
     // fallback: set src directly
     const frame = document.getElementById('yt-frame');
-    frame.src = `https://www.youtube.com/embed/${track.yt}?autoplay=1&enablejsapi=1`;
+    frame.src = `https://www.youtube.com/embed/${track.yt}?autoplay=1&enablejsapi=1&origin=https://www.youtube.com`;
   }
 
   updatePlayIcon();
