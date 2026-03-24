@@ -669,14 +669,133 @@
     font-size: 13px;
     font-style: italic;
   }
+
+  /* ── MOBILE HAMBURGER ── */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 50;
+  }
+
+  .sidebar-overlay.open { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 680px) {
+    :root {
+      --player-h: 110px;
+    }
+
+    .app {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr var(--player-h);
+    }
+
+    .sidebar {
+      position: fixed;
+      left: -100%;
+      top: 0;
+      height: 100%;
+      width: 260px;
+      z-index: 60;
+      transition: left 0.25s ease;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .main {
+      grid-column: 1;
+    }
+
+    .main-header {
+      padding: 16px 16px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .main-header-text { flex: 1; }
+
+    .hamburger {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .genre-title { font-size: 22px; }
+
+    .track-table-header {
+      grid-template-columns: 28px 1fr 60px;
+      padding: 10px 16px;
+      margin-top: 12px;
+    }
+
+    .track-table-header span:nth-child(3) { display: none; }
+
+    .track-row {
+      grid-template-columns: 28px 1fr 60px;
+      padding: 0 16px;
+      height: 60px;
+      margin: 0 4px;
+    }
+
+    .track-note-preview { display: none; }
+
+    .player-bar {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      padding: 8px 16px;
+      gap: 6px;
+      height: var(--player-h);
+    }
+
+    .player-track {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .player-thumb { width: 36px; height: 36px; }
+
+    .player-controls {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .player-buttons { gap: 12px; }
+
+    .ctrl-btn.play { width: 30px; height: 30px; }
+
+    .progress-row { flex: 1; }
+
+    .player-right { display: none; }
+  }
 </style>
 </head>
 <body>
 
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
 <div class="app">
 
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-title">Bandas que eu gosto<br>e recomendo</div>
       <div class="sidebar-subtitle">Lista do que mais gosto no momento</div>
@@ -687,8 +806,15 @@
   <!-- MAIN -->
   <main class="main">
     <div class="main-header">
-      <div class="genre-title" id="genre-title">Metal</div>
-      <div class="genre-desc" id="genre-desc"></div>
+      <button class="hamburger" id="hamburger" title="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="main-header-text">
+        <div class="genre-title" id="genre-title">Metal</div>
+        <div class="genre-desc" id="genre-desc"></div>
+      </div>
     </div>
     <div class="track-table-header">
       <span>#</span>
@@ -747,6 +873,13 @@
   </div>
 </div>
 
+<!-- IFRAME OCULTO - necessário para YT API funcionar corretamente -->
+<div id="yt-hidden-container" style="position:fixed;left:-9999px;top:-9999px;width:480px;height:270px;pointer-events:none;opacity:0;z-index:-1;">
+  <iframe id="yt-frame" allowfullscreen
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share">
+  </iframe>
+</div>
+
 <!-- VIDEO OVERLAY -->
 <div class="video-overlay" id="video-overlay">
   <div class="video-panel">
@@ -755,9 +888,7 @@
       <button class="video-panel-close" id="video-close">&times;</button>
     </div>
     <div id="yt-container">
-      <iframe id="yt-frame" allowfullscreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share">
-      </iframe>
+      <!-- O iframe é movido aqui quando o overlay abre -->
     </div>
     <div class="video-note" id="video-note"></div>
   </div>
@@ -880,6 +1011,7 @@ function loadYTApi() {
 
 window.onYouTubeIframeAPIReady = function() {
   ytPlayer = new YT.Player('yt-frame', {
+    playerVars: { autoplay: 0, enablejsapi: 1 },
     events: {
       onStateChange: onPlayerStateChange,
       onReady: onPlayerReady
@@ -887,18 +1019,21 @@ window.onYouTubeIframeAPIReady = function() {
   });
 };
 
-function onPlayerReady(e) {}
+function onPlayerReady(e) {
+  const vol = parseInt(document.getElementById('volume').value);
+  ytPlayer.setVolume(vol);
+}
 
 function onPlayerStateChange(e) {
   if (e.data === YT.PlayerState.ENDED) {
     playNext();
+    return;
   }
   if (e.data === YT.PlayerState.PLAYING) {
     isPlaying = true;
     updatePlayIcon();
     startProgressTimer();
-  }
-  if (e.data === YT.PlayerState.PAUSED) {
+  } else if (e.data === YT.PlayerState.PAUSED) {
     isPlaying = false;
     updatePlayIcon();
     clearProgressTimer();
@@ -1035,12 +1170,17 @@ function playPrev() {
 }
 
 function togglePlay() {
+  if (currentTrackIndex === -1) return;
   if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
-  const state = ytPlayer.getPlayerState();
-  if (state === YT.PlayerState.PLAYING) {
-    ytPlayer.pauseVideo();
-  } else {
-    ytPlayer.playVideo();
+  try {
+    const state = ytPlayer.getPlayerState();
+    if (state === YT.PlayerState.PLAYING) {
+      ytPlayer.pauseVideo();
+    } else {
+      ytPlayer.playVideo();
+    }
+  } catch(err) {
+    console.warn('togglePlay error:', err);
   }
 }
 
@@ -1059,21 +1199,38 @@ function selectGenre(id) {
   currentTrackIndex = -1;
   renderSidebar();
   renderTracks();
+  // Fechar sidebar no mobile
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
 }
 
 // ── VIDEO OVERLAY ──
-document.getElementById('btn-video').addEventListener('click', () => {
+function openVideoOverlay() {
   if (currentTrackIndex === -1) return;
+  // Move o iframe para dentro do overlay (mantém o player ativo)
+  const frame = document.getElementById('yt-frame');
+  const container = document.getElementById('yt-container');
+  if (frame && container && frame.parentNode !== container) {
+    container.appendChild(frame);
+  }
   document.getElementById('video-overlay').classList.add('open');
-});
+}
 
-document.getElementById('video-close').addEventListener('click', () => {
+function closeVideoOverlay() {
+  // Devolve o iframe para o container oculto (player continua tocando)
+  const frame = document.getElementById('yt-frame');
+  const hidden = document.getElementById('yt-hidden-container');
+  if (frame && hidden && frame.parentNode !== hidden) {
+    hidden.appendChild(frame);
+  }
   document.getElementById('video-overlay').classList.remove('open');
-});
+}
 
+document.getElementById('btn-video').addEventListener('click', openVideoOverlay);
+document.getElementById('video-close').addEventListener('click', closeVideoOverlay);
 document.getElementById('video-overlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('video-overlay')) {
-    document.getElementById('video-overlay').classList.remove('open');
+    closeVideoOverlay();
   }
 });
 
@@ -1101,9 +1258,13 @@ document.getElementById('btn-next').addEventListener('click', playNext);
 document.getElementById('btn-prev').addEventListener('click', playPrev);
 
 document.getElementById('volume').addEventListener('input', (e) => {
+  const vol = parseInt(e.target.value);
   if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
-    ytPlayer.setVolume(parseInt(e.target.value));
+    try { ytPlayer.setVolume(vol); } catch(err) {}
   }
+  // Atualiza visual do range
+  const pct = vol + '%';
+  e.target.style.background = `linear-gradient(to right, var(--accent) ${pct}, var(--surface3) ${pct})`;
 });
 
 document.getElementById('progress-bar').addEventListener('click', (e) => {
@@ -1114,10 +1275,28 @@ document.getElementById('progress-bar').addEventListener('click', (e) => {
   ytPlayer.seekTo(pct * dur, true);
 });
 
+// ── MOBILE SIDEBAR ──
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+});
+
+document.getElementById('sidebar-overlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+});
+
 // ── INIT ──
 loadYTApi();
 renderSidebar();
 renderTracks();
+
+// Inicializar visual do volume
+(function() {
+  const vol = document.getElementById('volume');
+  const pct = vol.value + '%';
+  vol.style.background = `linear-gradient(to right, var(--accent) ${pct}, var(--surface3) ${pct})`;
+})();
 </script>
 </body>
 </html>
